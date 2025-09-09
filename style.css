@@ -1,0 +1,368 @@
+/* =============== FONT IMPORT =============== */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+/* =============== THEME VARIABLES =============== */
+:root {
+  /* Colors */
+  --bg: #F2E9E4; /* Soft Cream */
+  --text: #22223B; /* Deep Navy */
+  --muted-text: #4A4E69; /* Muted Indigo */
+  --border: #ddd; /* General border for non-glass elements */
+
+  /* Glassmorphism specific - Light Theme */
+  --glass-card-bg: rgba(255, 255, 255, 0.4); /* Semi-transparent white */
+  --glass-card-border: rgba(255, 255, 255, 0.6); /* Lighter border */
+  --glass-input-bg: rgba(255, 255, 255, 0.2); /* Semi-transparent input bg */
+
+  /* Accent */
+  --accent-color: #C9ADA7; /* Warm Beige */
+  --accent-text: #22223B;
+
+  /* Sidebar */
+  --sidebar-bg: #22223B;
+  --sidebar-text: #F2E9E4;
+  --sidebar-hover: #4A4E69;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.08); /* Adjusted for glass effect */
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.15); /* Adjusted for glass effect */
+
+  /* Transitions */
+  --transition-fast: .2s ease;
+  --transition-medium: .3s ease;
+
+  /* Glassmorphism blur strength */
+  --glass-blur: 10px;
+}
+
+[data-theme="dark"] {
+  --bg: #22223B;
+  --text: #F2E9E4;
+  --muted-text: #C9ADA7;
+  --border: #C9ADA7;
+
+  /* Glassmorphism specific - Dark Theme */
+  --glass-card-bg: rgba(74, 78, 105, 0.4); /* Semi-transparent dark */
+  --glass-card-border: rgba(201, 173, 167, 0.6); /* Lighter accent border */
+  --glass-input-bg: rgba(74, 78, 105, 0.2); /* Semi-transparent dark input bg */
+
+  --accent-color: #C9ADA7;
+  --accent-text: #22223B;
+  --sidebar-bg: #1a1a2f;
+  --sidebar-hover: #4A4E69;
+}
+
+/* =============== BASE STYLES =============== */
+body {
+  font-family: 'Cairo', system-ui, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background var(--transition-medium), color var(--transition-medium);
+  /* Optional: Add a background image or gradient here to really showcase glassmorphism */
+  /* background-image: url('https://source.unsplash.com/random/1920x1080?abstract,color'); */
+  /* background-size: cover; */
+  /* background-attachment: fixed; */
+}
+
+h1, h4 {
+  margin: 0 0 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+h1 { font-size: 22px; letter-spacing: 0.5px; }
+h4 { font-size: 15px; color: var(--muted-text); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+a:hover { opacity: 0.8; }
+
+.hidden { display: none !important; }
+
+/* =============== LAYOUT =============== */
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+.sidebar .logo {
+  text-align: center;
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--accent-color);
+}
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px;
+}
+.menu-item {
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: var(--sidebar-text);
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  font-family: 'Cairo', sans-serif;
+}
+.menu-item:hover,
+.menu-item.active { background: var(--sidebar-hover); }
+.menu-item.disabled { opacity: 0.5; cursor: not-allowed; }
+
+#mainContent {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* =============== WIDGET & FEATURE CARDS (Glassmorphism Applied) =============== */
+.feature {
+  background: var(--glass-card-bg); /* Use glass variable */
+  border: 1px solid var(--glass-card-border); /* Use glass variable */
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur)); /* For Safari compatibility */
+
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.feature:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.feature h1, .feature h4 {
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.feature h4 { border-bottom: none; }
+
+/* Grid container for cards */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+/* =============== TABS =============== */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent; /* Keep transparent for tabs within glass cards */
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--muted-text);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.tab-btn.active {
+  background: var(--accent-color);
+  color: var(--accent-text);
+  font-weight: 600;
+  border-color: var(--accent-color);
+}
+.tab-content { padding-top: 16px; }
+.tab-content.hidden { display: none !important; }
+
+/* =============== FORMS & BUTTONS =============== */
+.form-group { margin-bottom: 12px; }
+label {
+  font-size: 12px;
+  color: var(--muted-text);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+input, select {
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  background: var(--glass-input-bg); /* Use glass input variable */
+  color: var(--text);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border var(--transition-fast), box-shadow var(--transition-fast);
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(201,173,167,0.4);
+}
+select {
+  appearance: none;
+  /* Adjust SVG fill color for better contrast on glass background if needed */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+button {
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--accent-color);
+  background-color: var(--accent-color);
+  color: var(--accent-text);
+  transition: background var(--transition-fast), transform .1s;
+}
+button:hover { background-color: #dec7c1; transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+button:disabled, input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.horizontal-inputs {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+.horizontal-inputs .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+@media (max-width: 500px) {
+  .horizontal-inputs { flex-direction: column; align-items: stretch; }
+}
+
+/* =============== TABLES =============== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+}
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+th { font-weight: 600; color: var(--muted-text); }
+.right { text-align: right; }
+.fav-btn {
+  cursor: pointer;
+  color: var(--accent-color);
+  font-size: 18px;
+  background: none;
+  border: none;
+  padding: 0 4px;
+}
+.table-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+#prayerTable tr:nth-child(even) { background: var(--bg); }
+
+/* =============== TO-DO LIST (Glassmorphism Applied) =============== */
+#todoList { list-style: none; padding: 0; margin: 12px 0 0; }
+#todoList li {
+  background: var(--glass-card-bg); /* Use glass variable */
+  border: 1px solid var(--glass-card-border); /* Use glass variable */
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+
+  padding: 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#todoList li.done span { text-decoration: line-through; opacity: 0.6; }
+#todoList li div button {
+  font-size: 12px;
+  background: transparent;
+  color: var(--muted-text);
+  border: none;
+  padding: 4px;
+}
+#todoList li.empty-state { color: var(--muted-text); }
+
+/* =============== MODAL (Glassmorphism Applied) =============== */
+#settingsModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5); /* Slightly darker overlay for modal */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#settingsModal.hidden { display: none; }
+.modal-content {
+  background: var(--glass-card-bg); /* Use glass variable */
+  border: 1px solid var(--glass-card-border); /* Use glass variable */
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+
+  color: var(--text);
+  padding: 20px;
+  border-radius: 12px;
+  width: 320px;
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text);
+}
+
+/* =============== UTILITIES & MESSAGES =============== */
+.loader, .error-msg, .meta-info {
+  font-size: 12px;
+  color: var(--muted-text);
+  margin-top: 8px;
+}
+.error-msg { color: #e11d48; }
+.output-box {
+  margin-top: 12px;
+  padding: 12px;
+  /* Output box is a lighter glass effect */
+  background-color: var(--glass-input-bg); /* Use a more transparent variable */
+  border: 1px solid var(--glass-card-border); /* Use glass border variable */
+  backdrop-filter: blur(calc(var(--glass-blur) / 2)); /* Slightly less blur for inner boxes */
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) / 2));
+  border-radius: 6px;
+  /* Removed box-shadow here to keep it lighter than main cards */
+}
