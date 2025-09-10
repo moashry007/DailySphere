@@ -1,30 +1,36 @@
-// weather.js
-
 import { el, qs, qsa } from './ui.js';
 import { appState } from './main.js';
 
 const COUNTRIES_API = "https://countriesnow.space/api/v0.1/countries";
 const GEOCODE_API = "https://geocode.maps.co/search?q=";
 const WEATHER_API = "https://api.open-meteo.com/v1/forecast";
-const weatherIcons = { 0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️", 61: "🌦️", 63: "🌧️", 65: "🌧️", 71: "🌨️", 75: "❄️", 95: "⛈️" };
+
+const weatherIcons = {
+  0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️",
+  45: "🌫️", 48: "🌫️",
+  51: "🌦️", 53: "🌦️", 55: "🌦️",
+  61: "🌧️", 63: "🌧️", 65: "🌧️",
+  71: "🌨️", 73: "🌨️", 75: "❄️", 77: "❄️",
+  80: "🌦️", 81: "🌧️", 82: "🌧️",
+  85: "🌨️", 86: "🌨️",
+  95: "⛈️", 96: "⛈️", 99: "⛈️"
+};
 
 let countriesData = [];
 let hourlyChartInstance;
 let weatherContainer;
 
 function displayError(message) {
-  if (weatherContainer) {
-    const errorEl = qs("#weatherError", weatherContainer);
-    if (errorEl) {
-      errorEl.textContent = message;
-      errorEl.classList.remove("hidden");
-    }
+  if (!weatherContainer) return;
+  const errorEl = qs("#weatherError", weatherContainer);
+  if (errorEl) {
+    errorEl.textContent = message;
+    errorEl.classList.toggle("hidden", !message);
   }
 }
 
 async function fetchData(url) {
   try {
-    
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Failed to fetch from ${url}`);
     return res.json();
@@ -38,10 +44,10 @@ async function loadCountries() {
   if (!weatherContainer) return;
   try {
     const { data } = await fetchData(COUNTRIES_API);
-    
     countriesData = data;
     const ddlCountries = qs("#ddlCountries", weatherContainer);
-    ddlCountries.innerHTML = "<option value=''>-- Select Country --</option>" +
+    ddlCountries.innerHTML =
+      "<option value=''>-- Select Country --</option>" +
       data.map(c => `<option value="${c.iso2}">${c.country}</option>`).join('');
   } catch (e) {
     displayError("Failed to load countries.");
@@ -50,7 +56,6 @@ async function loadCountries() {
 }
 
 function handleCountryChange() {
-    
   if (!weatherContainer) return;
   const selectedCountry = qs("#ddlCountries", weatherContainer).value;
   const citiesDdl = qs("#ddlCities", weatherContainer);
@@ -69,54 +74,54 @@ function handleCountryChange() {
 }
 
 function renderWeather(data, location) {
-    
   if (!weatherContainer) return;
-  //qs("#weatherLocation", weatherContainer).textContent = location;
+
   const current = data.current;
-  const current_units= data.current_units;
+  const units = data.current_units;
 
   qs("#highlightCard", weatherContainer).innerHTML = `
-    <h2>${weatherIcons[current.weather_code] || "❓"} ${location} (${current.is_day ? "Day" : "Night"})</h2>
-    <p class="temp">${Math.round(current.temperature_2m)}<span class="feels-like">${current_units.temperature_2m}</span></p>
-    <p class="feels-like">Feels like ${Math.round(current.apparent_temperature)}${current_units.apparent_temperature}</p>`;
-
+    <h2>${weatherIcons[current.weathercode] || "❓"} ${location} (${current.is_day ? "Day" : "Night"})</h2>
+    <p class="temp">${Math.round(current.temperature_2m)}<span class="feels-like">${units.temperature_2m}</span></p>
+    <p class="feels-like">Feels like ${Math.round(current.apparent_temperature)}${units.apparent_temperature}</p>
+  `;
 
   const currentHTML = `
-    <div class="weather-card"><h4>Wind Speed</h4><p>${current.wind_speed_10m} ${current_units.wind_speed_10m}</p></div>
-    <div class="weather-card"><h4>Wind Gusts</h4><p>${current.wind_gusts_10m} ${current_units.wind_gusts_10m}</p></div>
-    <div class="weather-card"><h4>Humidity</h4><p>${current.relative_humidity_2m}${current_units.relative_humidity_2m}</p></div>
-    <div class="weather-card"><h4>Precipitation</h4><p>${current.precipitation} ${current_units.precipitation}</p></div>
-    <div class="weather-card"><h4>Cloud Cover</h4><p>${current.cloud_cover}${current_units.cloud_cover}</p></div>
-    <div class="weather-card"><h4>Pressure</h4><p>${current.pressure_msl} ${current_units.pressure_msl}</p></div>
-    <div class="weather-card"><h4>Wind Direction</h4><p>${current.wind_direction_10m}${current_units.wind_direction_10m}</p></div>
-    <div class="weather-card"><h4>Rain</h4><p>${current.rain} ${current_units.rain}</p></div>
-    <div class="weather-card"><h4>Snowfall</h4><p>${current.snowfall} ${current_units.snowfall}</p></div>
-    `;
+    <div class="weather-card"><h4>Wind Speed</h4><p>${current.wind_speed_10m} ${units.wind_speed_10m}</p></div>
+    <div class="weather-card"><h4>Wind Gusts</h4><p>${current.wind_gusts_10m} ${units.wind_gusts_10m}</p></div>
+    <div class="weather-card"><h4>Humidity</h4><p>${current.relative_humidity_2m}${units.relative_humidity_2m}</p></div>
+    <div class="weather-card"><h4>Precipitation</h4><p>${current.precipitation} ${units.precipitation}</p></div>
+    <div class="weather-card"><h4>Cloud Cover</h4><p>${current.cloud_cover}${units.cloud_cover}</p></div>
+    <div class="weather-card"><h4>Pressure</h4><p>${current.pressure_msl} ${units.pressure_msl}</p></div>
+    <div class="weather-card"><h4>Wind Direction</h4><p>${current.wind_direction_10m}${units.wind_direction_10m}</p></div>
+    <div class="weather-card"><h4>Rain</h4><p>${current.rain} ${units.rain}</p></div>
+    <div class="weather-card"><h4>Snowfall</h4><p>${current.snowfall} ${units.snowfall}</p></div>
+  `;
 
   qs("#currentWeather", weatherContainer).innerHTML = currentHTML;
   qs("#currentWeather", weatherContainer).classList.remove("hidden");
-
 }
 
 function renderForecast(daily) {
   if (!weatherContainer) return;
   const forecastEl = qs("#forecastWeather", weatherContainer);
   forecastEl.innerHTML = "";
-  debugger
+
   const forecastDays = daily.time.map((time, index) => ({
     time: time,
     temperature_2m_max: daily.temperature_2m_max[index],
-    weather_code: daily.weather_code[index]
+    weathercode: daily.weathercode[index]
   }));
-  
+
   forecastDays.forEach(day => {
-    const date = new Date(day.time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    const date = new Date(day.time).toLocaleDateString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric'
+    });
     const card = document.createElement("div");
     card.classList.add("forecast-card");
     card.innerHTML = `
       <h4>${date}</h4>
       <p class="temp">${Math.round(day.temperature_2m_max)}°C</p>
-      <p class="description">${weatherIcons[day.weather_code]} ${getWeatherDescription(day.weather_code)}</p>
+      <p class="description">${weatherIcons[day.weathercode]} ${getWeatherDescription(day.weathercode)}</p>
     `;
     forecastEl.appendChild(card);
   });
@@ -125,9 +130,12 @@ function renderForecast(daily) {
 function renderHourlyChart(hourly) {
   if (!weatherContainer) return;
   if (hourlyChartInstance) hourlyChartInstance.destroy();
+
   const canvas = qs("#hourlyChart", weatherContainer);
   const hourlyData = hourly.temperature_2m;
-  const hourlyLabels = hourly.time.map(t => new Date(t).toLocaleTimeString(undefined, { hour: 'numeric', hour12: true }));
+  const hourlyLabels = hourly.time.map(t =>
+    new Date(t).toLocaleTimeString(undefined, { hour: 'numeric', hour12: true })
+  );
 
   hourlyChartInstance = new Chart(canvas.getContext("2d"), {
     type: "line",
@@ -155,19 +163,17 @@ async function fetchAndDisplayWeather(lat, lon, location) {
   qs(".weather-data", weatherContainer).classList.remove("hidden");
 
   try {
-// Define the expanded list of current weather parameters
-        const currentParams = [
-            "temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day",
-            "precipitation", "rain", "showers", "snowfall", "weather_code", "cloud_cover",
-            "pressure_msl", "surface_pressure", "wind_speed_10m", "wind_direction_10m",
-            "wind_gusts_10m"
-        ].join(',');
+    const currentParams = [
+      "temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day",
+      "precipitation", "rain", "showers", "snowfall", "weathercode", "cloud_cover",
+      "pressure_msl", "surface_pressure", "wind_speed_10m", "wind_direction_10m",
+      "wind_gusts_10m"
+    ].join(',');
 
-        // Update the URL to include the new parameters and request units
-        const url = `${WEATHER_API}?latitude=${lat}&longitude=${lon}&current=${currentParams}&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m&timezone=auto`;
-            const data = await fetchData(url);
+    const url = `${WEATHER_API}?latitude=${lat}&longitude=${lon}&current=${currentParams}&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m&timezone=auto`;
+    const data = await fetchData(url);
+
     renderWeather(data, location);
-    
     renderForecast(data.daily);
     renderHourlyChart(data.hourly);
   } catch (e) {
@@ -181,14 +187,15 @@ async function fetchAndDisplayWeather(lat, lon, location) {
 function getWeatherDescription(code) {
   const descriptions = {
     0: 'Clear sky', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
-    45: 'Fog', 48: 'Depositing rime fog', 51: 'Drizzle', 53: 'Drizzle',
-    55: 'Drizzle', 56: 'Freezing Drizzle', 57: 'Freezing Drizzle',
-    61: 'Rain', 63: 'Rain', 65: 'Heavy rain', 66: 'Freezing Rain',
-    67: 'Freezing Rain', 71: 'Snow fall', 73: 'Snow fall',
-    75: 'Snow fall', 77: 'Snow grains', 80: 'Rain showers',
-    81: 'Rain showers', 82: 'Rain showers', 85: 'Snow showers',
-    86: 'Snow showers', 95: 'Thunderstorm', 96: 'Thunderstorm with hail',
-    99: 'Thunderstorm with hail'
+    45: 'Fog', 48: 'Depositing rime fog',
+    51: 'Drizzle', 53: 'Drizzle', 55: 'Drizzle',
+    56: 'Freezing Drizzle', 57: 'Freezing Drizzle',
+    61: 'Rain', 63: 'Rain', 65: 'Heavy rain',
+    66: 'Freezing Rain', 67: 'Freezing Rain',
+    71: 'Snow fall', 73: 'Snow fall', 75: 'Snow fall',
+    77: 'Snow grains', 80: 'Rain showers', 81: 'Rain showers', 82: 'Rain showers',
+    85: 'Snow showers', 86: 'Snow showers',
+    95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Thunderstorm with hail'
   };
   return descriptions[code] || "Unknown";
 }
@@ -215,15 +222,14 @@ export function initWeather(container) {
     <div id="weatherError" class="error hidden"></div>
     <div id="weatherLoader" class="loader hidden"></div>
     <div class="weather-data hidden">
-     
       <div class="weather-tabs hidden">
         <div class="tabs">
-          <button class="tab-btn active" data-tab="currentW">Current</button>
-          <button class="tab-btn" data-tab="dailyW">5-Day</button>
-          <button class="tab-btn" data-tab="hourlyW">24h</button>
+          <button class="tab-btn active" data-tab="current">Current</button>
+          <button class="tab-btn" data-tab="forecast">5-Day</button>
+          <button class="tab-btn" data-tab="hourly">24h</button>
         </div>
         <div id="tab-current" class="tab-content">
-        <div id="highlightCard"></div>
+          <div id="highlightCard"></div>
           <div id="currentWeather" class="hidden"></div>
         </div>
         <div id="tab-forecast" class="tab-content hidden">
@@ -240,11 +246,12 @@ export function initWeather(container) {
   const ddlCities = qs("#ddlCities", container);
   const btnGetWeather = qs("#btnGetWeather", container);
   const btnCurrentLocation = qs("#btnCurrentLocation", container);
-  
+
   ddlCountries.addEventListener("change", handleCountryChange);
   ddlCities.addEventListener("change", () => {
     btnGetWeather.disabled = !ddlCities.value;
   });
+
   btnGetWeather.addEventListener("click", async () => {
     const city = ddlCities.value;
     const countryIso = ddlCountries.value;
@@ -257,6 +264,7 @@ export function initWeather(container) {
       displayError(`Error: ${e.message}`);
     }
   });
+
   btnCurrentLocation.addEventListener("click", () => {
     if (!navigator.geolocation) {
       alert("Geolocation not supported.");
@@ -267,7 +275,8 @@ export function initWeather(container) {
       err => displayError(`Geo Error: ${err.message}`)
     );
   });
-  
+
+  // Tab switching (fixed mapping)
   qsa(".tab-btn", container).forEach(btn => {
     btn.addEventListener("click", () => {
       qsa(".tab-btn", container).forEach(b => b.classList.remove("active"));
